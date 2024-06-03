@@ -1,29 +1,37 @@
 import Card from "@/lib/components/card";
+import { fetchCurrentData } from "@/lib/data";
+import { getRainDescription, getUVWarnings } from "@/lib/utility";
 
-export default function Page({ currentData }) {
+
+export default async function Page() {
   //fetching data...
+  const currentWeather = await fetchCurrentData();
+  console.log(currentWeather.forecast.forecastday);
+
   const currWeatherCardData = {
-    top: 'Saturday, June 1st, 2024',
-    main: '31\u00b0C',
-    bottom: 'Sunny'
+    top: currentWeather.location.localtime,
+    main: `${currentWeather.current.temp_c}\u00b0C`,
+    bottom: currentWeather.current.condition.text,
   };
 
   const highLowsCardData = {
     top: 'Lows - Highs',
-    main: '14 - 27\u00b0C',
+    main: `${Math.trunc(currentWeather.forecast.forecastday[0].day.mintemp_c)} - ${Math.trunc(currentWeather.forecast.forecastday[0].day.maxtemp_c)}\u00b0C`,
     bottom: ''
   }
-
+  
   const precipCardData = {
     top: 'Precipitation',
-    main: '4mm',
-    bottom: 'Maybe a slight drizzle'
+    main: `${currentWeather.forecast.forecastday[0].day.totalprecip_mm}mm`,
+    //TODO: Dynamic rain descriptors
+    bottom: `${getRainDescription(currentWeather.forecast.forecastday[0].day.totalprecip_mm)}`
   }
 
   const uviCardData = {
     top: 'UV Index',
-    main: '6',
-    bottom: 'High - avoid outside, use sunscreen, or cover self'
+    main: `${currentWeather.forecast.forecastday[0].day.uv}`,
+    //TODO: Display different UV warnings based on UVI
+    bottom: `${getUVWarnings(currentWeather.forecast.forecastday[0].day.uv)}`
   }
 
   return (

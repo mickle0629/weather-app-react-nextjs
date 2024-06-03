@@ -1,4 +1,5 @@
 export default function Card(props) {
+  //TODO: Pass font size for bottom text from props
   const { main, top, bottom } = props.data;
   return (
     <div className="flex flex-col
